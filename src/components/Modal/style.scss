@@ -7,14 +7,11 @@ $modal-backdrop-exit-delay: .1s;
   animation: Modal-fade-in $modal-transition-duration ease-out both;
   backdrop-filter: blur(2px);
   background: rgba(0, 0, 0, .72);
-  bottom: 0;
   display: flex;
+  inset: 0;
   justify-content: center;
-  left: 0;
   padding: var(--space-4);
   position: fixed;
-  right: 0;
-  top: 0;
   z-index: 100;
 
   &--closing {
@@ -30,12 +27,13 @@ $modal-backdrop-exit-delay: .1s;
     animation: Modal-dialog-in $modal-transition-duration ease-out both;
     background: #fff;
     border-radius: 4px;
-    max-height: calc(100vh - var(--space-8));
-    max-width: 480px;
+    inline-size: 100%;
+    max-block-size: calc(100vh - var(--space-8));
+    max-inline-size: 480px;
     overflow-y: auto;
-    padding: var(--space-4) var(--space-6) var(--space-6);
+    padding-block: var(--space-4) var(--space-6);
+    padding-inline: var(--space-6);
     position: relative;
-    width: 100%;
 
     &:focus {
       outline: none;
@@ -66,7 +64,8 @@ $modal-backdrop-exit-delay: .1s;
     align-items: center;
     display: flex;
     justify-content: space-between;
-    margin: 0 0 var(--space-4);
+    margin-block: 0 var(--space-4);
+    margin-inline: 0;
   }
 
   &__title {

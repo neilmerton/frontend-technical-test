@@ -37,13 +37,13 @@
   }
 
   .VehicleList__item {
-    border-bottom: 1px solid var(--color-divider);
+    border-block-end: 1px solid var(--color-divider);
   }
 
   // Divider between column text areas only, not the images — matches the
   // desktop/tablet mockups, which have flush images but a bordered content area.
   .VehicleList__item:nth-child(2n) .VehicleCard__body {
-    border-left: 1px solid var(--color-divider);
+    border-inline-start: 1px solid var(--color-divider);
   }
 }
 
@@ -51,17 +51,16 @@
 
   .VehicleList {
     grid-template-columns: repeat(4, 1fr);
-    margin-left: calc(50% - 50vw);
-    margin-right: calc(50% - 50vw);
-    width: 100vw;
+    inline-size: 100vw;
+    margin-inline: calc(50% - 50vw);
   }
 
   .VehicleList__item:nth-child(2n) .VehicleCard__body {
-    border-left: 0;
+    border-inline-start: 0;
   }
 
   .VehicleList__item:not(:nth-child(4n+1)) .VehicleCard__body {
-    border-left: 1px solid var(--color-divider);
+    border-inline-start: 1px solid var(--color-divider);
   }
 }
 
