@@ -1,3 +1,73 @@
 .VehicleList {
-  width: 100%;
+  display: block;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  &__item {
+    animation: VehicleList-fade-in .4s ease-out both;
+    animation-delay: calc(var(--stagger-index) * 80ms);
+  }
+
+  &__status {
+    color: var(--color-body);
+    padding: var(--space-8) 0;
+    text-align: center;
+  }
+}
+
+@keyframes VehicleList-fade-in {
+
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (min-width: 768px) {
+
+  .VehicleList {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .VehicleList__item {
+    border-bottom: 1px solid var(--color-divider);
+  }
+
+  // Divider between column text areas only, not the images — matches the
+  // desktop/tablet mockups, which have flush images but a bordered content area.
+  .VehicleList__item:nth-child(2n) .VehicleCard__body {
+    border-left: 1px solid var(--color-divider);
+  }
+}
+
+@media (min-width: 1024px) {
+
+  .VehicleList {
+    grid-template-columns: repeat(4, 1fr);
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    width: 100vw;
+  }
+
+  .VehicleList__item:nth-child(2n) .VehicleCard__body {
+    border-left: 0;
+  }
+
+  .VehicleList__item:not(:nth-child(4n+1)) .VehicleCard__body {
+    border-left: 1px solid var(--color-divider);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .VehicleList__item {
+    animation: none;
+  }
 }

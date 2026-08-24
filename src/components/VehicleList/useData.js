@@ -7,10 +7,22 @@ export default function useData() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    getData()
-      .then((response) => setVehicles(response))
-      .catch((err) => setError(err))
-      .finally(() => setLoading(false));
+    let isMounted = true;
+
+    async function loadVehicles() {
+      try {
+        const response = await getData();
+        if (isMounted) setVehicles(response);
+      } catch (err) {
+        if (isMounted) setError(err.message || String(err));
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    }
+
+    loadVehicles();
+
+    return () => { isMounted = false; };
   }, []);
 
   return [

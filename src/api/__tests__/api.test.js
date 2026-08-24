@@ -3,7 +3,7 @@ import { request } from '../helpers';
 
 jest.mock('../helpers');
 
-describe.skip('getData Tests', () => {
+describe('getData Tests', () => {
   const safelyCallApi = async () => {
     try {
       return await getData();
@@ -52,6 +52,16 @@ describe.skip('getData Tests', () => {
     request.mockResolvedValueOnce([{ apiUrl: '/api/ftype.json' }, { apiUrl: '/api/xe.json' }, { apiUrl: '/api/xj.json' }]);
     request.mockResolvedValueOnce({ id: 'ftype', price: '' });
     request.mockResolvedValueOnce({ id: 'xe' });
+    request.mockResolvedValueOnce({ id: 'xj', price: '£40,000' });
+
+    return expect(safelyCallApi()).resolves.toEqual([
+      { apiUrl: '/api/xj.json', id: 'xj', price: '£40,000' }
+    ]);
+  });
+
+  it('Should ignore vehicles with a whitespace-only price', () => {
+    request.mockResolvedValueOnce([{ apiUrl: '/api/xf.json' }, { apiUrl: '/api/xj.json' }]);
+    request.mockResolvedValueOnce({ id: 'xf', price: '   ' });
     request.mockResolvedValueOnce({ id: 'xj', price: '£40,000' });
 
     return expect(safelyCallApi()).resolves.toEqual([

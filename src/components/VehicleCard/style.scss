@@ -1,0 +1,159 @@
+.VehicleCard {
+  --media-width: 144px;
+
+  display: flex;
+
+  &__media {
+    flex: 0 0 var(--media-width);
+  }
+
+  // No aspect-ratio: the image stretches (via the row's default
+  // align-items: stretch) to match whatever height the text content in
+  // __body naturally needs, rather than forcing a fixed square that leaves
+  // a gap for shorter cards or clips for taller ones.
+  &__image {
+    display: block;
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+  }
+
+  // Divider sits under the text column only, matching the desktop/tablet
+  // border-left divider — the image column stays flush between cards.
+  // flex: 1 makes __body always fill the remaining row width so the
+  // border-bottom reaches the right edge regardless of text length.
+  &__body {
+    -webkit-font-smoothing: antialiased;
+    border-bottom: 1px solid var(--color-divider);
+    flex: 1;
+    padding: var(--space-4) var(--space-6);
+  }
+
+  &__name {
+    font-size: var(--font-size-heading);
+    letter-spacing: .03em;
+    margin: 0 0 var(--space-1);
+    text-transform: uppercase;
+  }
+
+  &__price {
+    color: var(--color-body);
+    letter-spacing: .08em;
+    margin: 0 0 var(--space-3);
+  }
+
+  &__description {
+    color: var(--color-body);
+    line-height: 1.5;
+    margin: 0 0 0.5lh;
+  }
+
+  &__readMore {
+    background: transparent;
+    border: 0;
+    color: var(--color-body);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: var(--font-size-base);
+    font-weight: 700;
+    letter-spacing: .08em;
+    padding: var(--space-3) var(--space-3) var(--space-3) var(--space-6);
+    position: relative;
+    text-transform: uppercase;
+    transition: opacity .15s ease;
+
+    &::before {
+      content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16px' height='16px' viewBox='0 0 32 32'%3E%3Cpath fill='currentColor' d='M22 16L12 26l-1.4-1.4l8.6-8.6l-8.6-8.6L12 6z'/%3E%3C/svg%3E");
+      display: block;
+      height: 16px;
+      left: var(--space-1);
+      position: absolute;
+      width: 16px;
+    }
+
+    &:hover {
+      opacity: .85;
+    }
+
+    &:focus-visible {
+      outline: var(--focus-ring-width) solid var(--color-text);
+      outline-offset: var(--focus-ring-offset);
+    }
+  }
+
+  &__specs {
+    margin: 0;
+
+    dt {
+      font-weight: 700;
+      margin-top: var(--space-3);
+    }
+
+    dd {
+      margin: 0;
+    }
+  }
+}
+
+@media (min-width: 768px) {
+
+  .VehicleCard {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    // .VehicleCard fills the grid row's full height (grid items stretch by
+    // default), so the body's flex:1 — and its divider border-left — reaches
+    // all the way down to match the row's tallest card, not just its own
+    // content height.
+    // border-bottom: 0 cancels the mobile-only bottom divider — this
+    // breakpoint uses a border-left divider (see VehicleList/style.scss)
+    // instead.
+    &__body {
+      border-width: 0;
+      display: flex;
+      flex-direction: column;
+      padding-block: var(--space-6) var(--space-3);
+      text-align: center;
+    }
+
+    // Resets the mobile-only height: 100% — at this width the image's own
+    // aspect-ratio should drive its height, not a stretch to match __body.
+    &__image {
+      aspect-ratio: 16 / 9;
+      height: auto;
+    }
+
+    // Cancels the mobile-only flex-basis now that .VehicleCard is itself a
+    // flex container, so the image keeps sizing from its aspect-ratio.
+    &__media {
+      flex: none;
+    }
+
+    // As a flex child of __body, align-self overrides the default stretch
+    // so the border hugs the text width instead of spanning the full card.
+    &__name {
+      align-self: center;
+      border-bottom: 1px solid currentColor;
+      border-top: 1px solid currentColor;
+      display: inline-block;
+      margin-bottom: 1lh;
+      padding-bottom: var(--space-1);
+      padding-top: var(--space-1);
+    }
+
+    &__price,
+    &__description {
+      margin-bottom: 0.75lh;
+    }
+
+    // Pins "Read more" to the same baseline across every card in a row,
+    // regardless of how many lines the description above it wraps to.
+    // align-self overrides the default stretch (see __name above) so the
+    // button only occupies the width its own text needs, centered.
+    &__readMore {
+      align-self: center;
+      margin-top: auto;
+    }
+  }
+}

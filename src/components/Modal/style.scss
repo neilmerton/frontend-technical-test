@@ -1,0 +1,134 @@
+$modal-transition-duration: .2s;
+$modal-dialog-exit-duration: .2s;
+$modal-backdrop-exit-delay: .1s;
+
+.Modal {
+  align-items: center;
+  animation: Modal-fade-in $modal-transition-duration ease-out both;
+  backdrop-filter: blur(2px);
+  background: rgba(0, 0, 0, .72);
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  left: 0;
+  padding: var(--space-4);
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 100;
+
+  &--closing {
+    // Starts before the dialog's own exit animation finishes (delay is
+    // shorter than $modal-dialog-exit-duration) so the backdrop fade and the
+    // tail end of the dialog's exit overlap, rather than reading as two
+    // fully sequential steps.
+    animation: Modal-fade-out $modal-transition-duration ease-in both;
+    animation-delay: $modal-backdrop-exit-delay;
+  }
+
+  &__dialog {
+    animation: Modal-dialog-in $modal-transition-duration ease-out both;
+    background: #fff;
+    border-radius: 4px;
+    max-height: calc(100vh - var(--space-8));
+    max-width: 480px;
+    overflow-y: auto;
+    padding: var(--space-4) var(--space-6) var(--space-6);
+    position: relative;
+    width: 100%;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &--closing &__dialog {
+    animation: Modal-dialog-out $modal-dialog-exit-duration ease-in both;
+  }
+
+  &__close {
+    background: none;
+    border: 0;
+    cursor: pointer;
+    display: flex;
+    font-size: 24px;
+    line-height: 1;
+    padding: var(--space-1);
+    order: 2;
+
+    &:focus-visible {
+      outline: var(--focus-ring-width) solid var(--color-text);
+      outline-offset: var(--focus-ring-offset);
+    }
+  }
+
+  &__header {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 0 var(--space-4);
+  }
+
+  &__title {
+    font-size: 20px;
+    order: 1;
+  }
+}
+
+@keyframes Modal-fade-in {
+
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes Modal-fade-out {
+
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes Modal-dialog-in {
+
+  from {
+    opacity: 0;
+    transform: scale(.95) translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes Modal-dialog-out {
+
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(.95) translateY(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .Modal,
+  .Modal--closing,
+  .Modal__dialog,
+  .Modal--closing .Modal__dialog {
+    animation: none;
+  }
+}
