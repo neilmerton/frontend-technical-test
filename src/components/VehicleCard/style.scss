@@ -106,7 +106,7 @@
     // default), so the body's flex:1 — and its divider border-left — reaches
     // all the way down to match the row's tallest card, not just its own
     // content height.
-    // border-bottom: 0 cancels the mobile-only bottom divider — this
+    // border-width: 0 cancels the mobile-only bottom divider — this
     // breakpoint uses a border-left divider (see VehicleList/style.scss)
     // instead.
     &__body {
