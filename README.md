@@ -1,4 +1,4 @@
-Frontend Technical Test for [TeamITG](https://teamitg.com/)
+# Frontend Technical Test
 
 ## System requirements
 You’ll want to ensure you have the following already installed on your local machine before getting started with the test:
