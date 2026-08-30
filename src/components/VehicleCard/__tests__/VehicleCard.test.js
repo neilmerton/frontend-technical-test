@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
+import { axe } from 'jest-axe';
 import VehicleCard from '..';
 
 const vehicle = {
@@ -54,5 +55,22 @@ describe('<VehicleCard /> Tests', () => {
     render(<VehicleCard vehicle={{ ...vehicle, meta: undefined }} />);
 
     expect(screen.queryByRole('button', { name: 'Read more about F-TYPE' })).toBeNull();
+  });
+
+  it('Should have no accessibility violations', async () => {
+    const { container } = render(<VehicleCard vehicle={vehicle} />);
+
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it('Should have no accessibility violations with the details modal open', async () => {
+    render(<VehicleCard vehicle={vehicle} />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Read more about F-TYPE' }));
+
+    // The modal itself portals into document.body rather than the RTL
+    // container. The "region" rule is disabled since it expects a full
+    // page with landmarks, not an isolated component under test.
+    expect(await axe(document.body, { rules: { region: { enabled: false } } })).toHaveNoViolations();
   });
 });

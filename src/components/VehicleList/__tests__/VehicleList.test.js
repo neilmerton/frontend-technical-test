@@ -1,5 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
+import { axe } from 'jest-axe';
 import VehicleList from '..';
 import useData from '../useData';
 
@@ -53,5 +54,12 @@ describe('<VehicleList /> Tests', () => {
     expect(queryByTestId('error')).toBeNull();
     expect(queryByTestId('results')).toBeNull();
     expect(queryByTestId('empty')).not.toBeNull();
+  });
+
+  it('Should have no accessibility violations when showing results', async () => {
+    useData.mockReturnValue([false, false, vehicles]);
+    const { container } = render(<VehicleList />);
+
+    expect(await axe(container)).toHaveNoViolations();
   });
 });

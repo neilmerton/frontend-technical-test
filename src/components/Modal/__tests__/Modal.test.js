@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
+import { axe } from 'jest-axe';
 import Modal from '..';
 
 describe('<Modal /> Tests', () => {
@@ -8,6 +9,16 @@ describe('<Modal /> Tests', () => {
 
     expect(screen.getByRole('dialog', { name: 'F-TYPE' })).not.toBeNull();
     expect(screen.getByText('Extra details')).not.toBeNull();
+  });
+
+  it('Should have no accessibility violations', async () => {
+    render(<Modal id="test" title="F-TYPE" onClose={() => {}}>Extra details</Modal>);
+
+    // Modal renders via a portal into document.body, so axe must scan
+    // there rather than the RTL container, which stays empty. The
+    // "region" rule is disabled since it expects a full page with
+    // landmarks, not an isolated component under test.
+    expect(await axe(document.body, { rules: { region: { enabled: false } } })).toHaveNoViolations();
   });
 
   it('Should focus the dialog on mount', () => {
