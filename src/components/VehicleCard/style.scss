@@ -5,6 +5,7 @@
 
   &__media {
     flex: 0 0 var(--media-width);
+    position: relative;
   }
 
   // No aspect-ratio: the image stretches (via the row's default
@@ -85,6 +86,17 @@
     }
   }
 
+  &__drawer {
+    background-color: rgba(255, 255, 255, 0.8);
+    border-inline-start: 1px solid var(--color-divider);
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    padding: var(--space-4);
+    animation: VehicleDrawerIn 0.3s ease-in;
+  }
+
   &__specs {
     margin: 0;
 
@@ -157,5 +169,15 @@
       align-self: center;
       margin-block-start: auto;
     }
+  }
+}
+
+@keyframes VehicleDrawerIn {
+  from {
+    right: -200px;
+  }
+
+  to {
+    right: 0;
   }
 }
