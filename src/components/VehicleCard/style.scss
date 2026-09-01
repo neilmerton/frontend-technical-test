@@ -97,6 +97,22 @@
     animation: VehicleDrawerIn 0.3s ease-in;
   }
 
+  &__drawer__close {
+    background: none;
+    border: 0;
+    cursor: pointer;
+    display: flex;
+    float: right;
+    font-size: 24px;
+    line-height: 1;
+    padding: var(--space-1);
+
+    &:focus-visible {
+      outline: var(--focus-ring-width) solid var(--color-text);
+      outline-offset: var(--focus-ring-offset);
+    }
+  }
+
   &__specs {
     margin: 0;
 
