@@ -2,6 +2,14 @@
   --media-width: 144px;
 
   display: flex;
+  // Establishes the containing block for &__drawer's absolute positioning,
+  // so it docks to this card rather than the viewport.
+  position: relative;
+  // Clips the drawer's slide-in transform to this card. Without it, the
+  // rightmost card in a row briefly translates the drawer past the
+  // viewport's right edge, which browsers count toward the page's
+  // scrollable area and shows as a horizontal scrollbar.
+  overflow: hidden;
 
   &__media {
     flex: 0 0 var(--media-width);
@@ -87,14 +95,38 @@
   }
 
   &__drawer {
-    background-color: rgba(255, 255, 255, 0.8);
+    animation: VehicleDrawerIn .3s ease-out both;
+    background-color: rgba(255, 255, 255, 0.97);
+    block-size: 100%;
     border-inline-start: 1px solid var(--color-divider);
-    position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
+    inline-size: min(280px, 100%);
+    inset-block: 0;
+    inset-inline-end: 0;
+    overflow-y: auto;
     padding: var(--space-4);
-    animation: VehicleDrawerIn 0.3s ease-in;
+    position: absolute;
+
+    &:focus {
+      outline: none;
+    }
+
+    &--closing {
+      animation: VehicleDrawerOut .2s ease-in both;
+    }
+  }
+
+  &__drawer__header {
+    align-items: flex-start;
+    display: flex;
+    justify-content: space-between;
+    margin-block-end: var(--space-3);
+  }
+
+  &__drawer__title {
+    font-size: var(--font-size-heading);
+    letter-spacing: .03em;
+    margin: 0;
+    text-transform: uppercase;
   }
 
   &__drawer__close {
@@ -102,9 +134,10 @@
     border: 0;
     cursor: pointer;
     display: flex;
-    float: right;
+    flex: none;
     font-size: 24px;
     line-height: 1;
+    margin-inline-start: var(--space-2);
     padding: var(--space-1);
 
     &:focus-visible {
@@ -190,10 +223,28 @@
 
 @keyframes VehicleDrawerIn {
   from {
-    right: -200px;
+    transform: translateX(100%);
   }
 
   to {
-    right: 0;
+    transform: translateX(0);
+  }
+}
+
+@keyframes VehicleDrawerOut {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .VehicleCard__drawer,
+  .VehicleCard__drawer--closing {
+    animation: none;
   }
 }
