@@ -95,7 +95,6 @@
   }
 
   &__drawer {
-    animation: VehicleDrawerIn .3s ease-out both;
     background-color: rgba(255, 255, 255, 0.97);
     block-size: 100%;
     border-inline-start: 1px solid var(--color-divider);
@@ -104,14 +103,24 @@
     inset-inline-end: 0;
     overflow-y: auto;
     padding: var(--space-4);
+    pointer-events: none;
     position: absolute;
+    // Closing uses this rule's own transition (see the cascade note below).
+    transition: transform .2s ease-in;
+    transform: translateX(100%);
 
     &:focus {
       outline: none;
     }
 
-    &--closing {
-      animation: VehicleDrawerOut .2s ease-in both;
+    // Opening uses this modifier's transition instead of the base rule's,
+    // since the CSS Transitions spec resolves `transition` from the style
+    // that applies *after* the change — giving open and close their own
+    // independent durations/easings without any JS involvement.
+    &--open {
+      pointer-events: auto;
+      transition: transform .3s ease-out;
+      transform: translateX(0);
     }
   }
 
@@ -221,30 +230,10 @@
   }
 }
 
-@keyframes VehicleDrawerIn {
-  from {
-    transform: translateX(100%);
-  }
-
-  to {
-    transform: translateX(0);
-  }
-}
-
-@keyframes VehicleDrawerOut {
-  from {
-    transform: translateX(0);
-  }
-
-  to {
-    transform: translateX(100%);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
 
   .VehicleCard__drawer,
-  .VehicleCard__drawer--closing {
-    animation: none;
+  .VehicleCard__drawer--open {
+    transition: none;
   }
 }

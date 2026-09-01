@@ -7,14 +7,8 @@ import './style.scss';
 
 const FOCUSABLE_SELECTOR = 'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
 
-function prefersReducedMotion() {
-  return typeof window.matchMedia === 'function'
-    && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-}
-
 export default function VehicleCard({ vehicle }) {
   const [isDetailsOpen, setDetailsOpen] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
   const drawerRef = useRef(null);
   const {
     id, price, description, media, meta
@@ -26,25 +20,12 @@ export default function VehicleCard({ vehicle }) {
   const drawerId = `vehicle-${id}`;
   const drawerTitleId = `${drawerId}-title`;
 
-  // Skips the exit-animation wait entirely when the user has requested
-  // reduced motion, matching the CSS override in style.scss.
-  function requestClose() {
-    if (prefersReducedMotion()) {
-      setDetailsOpen(false);
-      return;
-    }
-
-    setIsClosing(true);
-  }
-
-  // Only the drawer's own animation should trigger the deferred close, not
-  // one bubbling up from a descendant's animation finishing too.
-  function handleDrawerAnimationEnd(event) {
-    if (isClosing && event.target === event.currentTarget) {
-      setIsClosing(false);
-      setDetailsOpen(false);
-    }
-  }
+  // React 17 doesn't recognise `inert` as a passable JSX attribute, so it's
+  // set as a real DOM property here instead — this is what actually keeps
+  // the closed (but still-mounted) drawer out of the tab order.
+  useEffect(() => {
+    if (drawerRef.current) drawerRef.current.inert = !isDetailsOpen;
+  }, [isDetailsOpen]);
 
   useEffect(() => {
     if (!isDetailsOpen) return undefined;
@@ -52,10 +33,15 @@ export default function VehicleCard({ vehicle }) {
     const previouslyFocused = document.activeElement;
     const drawerNode = drawerRef.current;
     drawerNode.focus({ preventScroll: true });
+    // preventScroll only reliably suppresses the page scrolling to reveal
+    // the newly-focused drawer — it doesn't stop this card's own
+    // overflow:hidden box (a scroll container, since it clips the drawer's
+    // slide animation) from scrolling itself, so that's undone explicitly.
+    drawerNode.closest('.VehicleCard').scrollLeft = 0;
 
     function handleKeyDown(event) {
       if (event.key === 'Escape') {
-        requestClose();
+        setDetailsOpen(false);
         return;
       }
 
@@ -109,26 +95,26 @@ export default function VehicleCard({ vehicle }) {
             aria-expanded={isDetailsOpen}
             aria-controls={drawerId}
             aria-label={`Read more about ${name}`}
-            onClick={() => (isDetailsOpen ? requestClose() : setDetailsOpen(true))}
+            onClick={() => setDetailsOpen((open) => !open)}
           >
             Read more
           </button>
         )}
       </div>
-      {meta && (isDetailsOpen || isClosing) && (
+      {meta && (
         <div
-          className={`VehicleCard__drawer${isClosing ? ' VehicleCard__drawer--closing' : ''}`}
+          className={`VehicleCard__drawer${isDetailsOpen ? ' VehicleCard__drawer--open' : ''}`}
           id={drawerId}
           role="dialog"
           aria-modal="true"
           aria-labelledby={drawerTitleId}
+          aria-hidden={!isDetailsOpen}
           ref={drawerRef}
           tabIndex={-1}
-          onAnimationEnd={handleDrawerAnimationEnd}
         >
           <div className="VehicleCard__drawer__header">
             <h2 className="VehicleCard__drawer__title" id={drawerTitleId}>{name}</h2>
-            <button type="button" className="VehicleCard__drawer__close" aria-label="Close" onClick={requestClose}>
+            <button type="button" className="VehicleCard__drawer__close" aria-label="Close" onClick={() => setDetailsOpen(false)}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="32"
