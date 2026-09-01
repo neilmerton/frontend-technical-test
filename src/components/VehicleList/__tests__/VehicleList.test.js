@@ -1,5 +1,7 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import {
+  render, fireEvent, screen, act
+} from '@testing-library/react';
 import { axe } from 'jest-axe';
 import VehicleList from '..';
 import useData from '../useData';
@@ -14,6 +16,15 @@ const vehicles = [
     media: [
       { name: 'vehicle', url: '/images/16x9/xe_k17.jpg' },
       { name: 'vehicle', url: '/images/1x1/xe_k17.jpg' },
+    ],
+  },
+  {
+    id: 'ftype',
+    price: '£60,000',
+    description: 'Pulse-quickening, pure Jaguar sports car.',
+    media: [
+      { name: 'vehicle', url: '/images/16x9/ftype_k17.jpg' },
+      { name: 'vehicle', url: '/images/1x1/ftype_k17.jpg' },
     ],
   },
 ];
@@ -61,5 +72,51 @@ describe('<VehicleList /> Tests', () => {
     const { container } = render(<VehicleList />);
 
     expect(await axe(container)).toHaveNoViolations();
+  });
+
+  describe('Search', () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    it('Should filter the rendered vehicles down to those matching the search term', () => {
+      useData.mockReturnValue([false, false, vehicles]);
+      render(<VehicleList />);
+
+      fireEvent.change(screen.getByLabelText('Search vehicles'), { target: { value: 'f-type' } });
+      act(() => { jest.runAllTimers(); });
+
+      expect(screen.queryByRole('heading', { name: 'F-TYPE' })).not.toBeNull();
+      expect(screen.queryByRole('heading', { name: 'XE' })).toBeNull();
+    });
+
+    it('Should show a "no results" state when the search term matches nothing', () => {
+      useData.mockReturnValue([false, false, vehicles]);
+      render(<VehicleList />);
+
+      fireEvent.change(screen.getByLabelText('Search vehicles'), { target: { value: 'hovercraft' } });
+      act(() => { jest.runAllTimers(); });
+
+      expect(screen.queryByTestId('results')).toBeNull();
+      expect(screen.queryByTestId('no-results')).not.toBeNull();
+    });
+
+    it('Should restore every vehicle when the search term is cleared', () => {
+      useData.mockReturnValue([false, false, vehicles]);
+      render(<VehicleList />);
+
+      const input = screen.getByLabelText('Search vehicles');
+      fireEvent.change(input, { target: { value: 'f-type' } });
+      act(() => { jest.runAllTimers(); });
+      fireEvent.change(input, { target: { value: '' } });
+      act(() => { jest.runAllTimers(); });
+
+      expect(screen.queryByRole('heading', { name: 'XE' })).not.toBeNull();
+      expect(screen.queryByRole('heading', { name: 'F-TYPE' })).not.toBeNull();
+    });
   });
 });
