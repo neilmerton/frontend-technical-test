@@ -21,10 +21,9 @@ async function withDetails(summary) {
  */
 export default async function getData() {
   const summaries = await request('/api/vehicles.json');
-  const results = await Promise.all(
-    summaries.map((summary) => withDetails(summary).catch(() => null)),
-  );
+  const settled = await Promise.allSettled(summaries.map(withDetails));
 
-  return results
-    .filter((vehicle) => vehicle && vehicle.price && vehicle.price.trim());
+  return settled
+    .filter((result) => result.status === 'fulfilled' && result.value.price)
+    .map((result) => result.value);
 }
